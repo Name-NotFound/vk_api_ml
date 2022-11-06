@@ -1,10 +1,10 @@
 import csv
 import vk_api
-import numpy as np
+from random import randint
 from tqdm import tqdm
 from datetime import date, datetime
 
-vk_session = vk_api.VkApi(token="user token")
+vk_session = vk_api.VkApi(token="")
 
 
 def get_profile_info(user_id):
@@ -83,24 +83,13 @@ def get_relation(user_info):
     return relation
 
 
-file_writer = csv.writer(open('data.csv'), delimiter = ";")
-file_writer.writerow(["ID",
-                      "name",
-                      "age",
-                      "status",
-                      "groups",
-                      "groups_links",
-                      "friends",
-                      "followers",
-                      "likes",
-                      "relationship"])
+file_writer = csv.writer(open('data.csv', 'w', encoding='UTF-8'), delimiter = ";")
 
 counter = 0
-while counter < 10000:
-    data = []
-    for info in tqdm(get_profile_info(np.random.randint(100000000, 999999999, 100))):
-        try:
-            data.append([info['id'],
+while counter < 2:
+    try:
+        info = get_profile_info(randint(100000000, 999999999))[0]
+        new_user_data = [info['id'],
                          get_name(info),
                          get_age(info),
                          get_status(info),
@@ -108,10 +97,10 @@ while counter < 10000:
                          get_friends_count(info),
                          get_followers_count(info),
                          get_average_likes(info['id']),
-                         get_relation(info)])
-        except:
-            pass
+                         get_relation(info)]
+        print(new_user_data)
+        file_writer.writerow(new_user_data)
+        counter +=1
 
-    file_writer.writerows(data)
-    counter += len(data)
-    print(data)
+    except:
+        pass
